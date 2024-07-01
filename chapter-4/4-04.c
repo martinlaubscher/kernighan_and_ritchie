@@ -15,6 +15,7 @@ int getch(void);
 void ungetch(int);
 double peek(void);
 void duplicate(void);
+void swap(void);
 void clear(void);
 
 
@@ -67,6 +68,9 @@ int main() {
             break;
         case 'd':
             duplicate();
+            break;
+        case 's':
+            swap();
             break;
         case 'c':
             clear();
@@ -152,6 +156,18 @@ double peek(void) {
 void duplicate(void) {
     push(peek());
 }
+
+void swap(void) {
+    if (sp > 1) {
+        int tmp1 = pop();
+        int tmp2 = pop();
+        push(tmp1);
+        push(tmp2);
+    } else {
+        puts("error: less than two elements in the stack.");
+    }
+}
+
 
 void clear(void) {
     sp = 0;
