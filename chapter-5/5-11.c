@@ -2,17 +2,15 @@
 #include <stdlib.h>
 
 #define WIDTH "8"
+#define TAB 8
 
 void entab(int, char **);
 void detab(int, char **);
-int settab(int, int);
-int setblank(int, int);
+int settab(int, int, int);
+void setblank(int, int);
 
 int main(int argc, char **argv) {
 
-    //char **width;
-    //*width = WIDTH;
-    
     char *width[] = {WIDTH};
 
     if (argc < 2) {
@@ -31,10 +29,9 @@ int main(int argc, char **argv) {
 
 void entab(int argc, char **tabs) {
     char c;
+    int pos = 0;
     int blanks = 0;
     int i = 0;
-
-    //printf("argc: %d", argc);
 
     while ((c = getchar()) != EOF) {
         if (c == ' ') {
@@ -42,14 +39,17 @@ void entab(int argc, char **tabs) {
             while ((c = getchar()) == ' ') {
                 ++blanks;
             }
+        } else if (c == '\n') {
+            pos = 0;
+            i = 0;
         }
         while (blanks > 0) {
-            int width = *tabs[i%argc] - '0';
-            blanks = settab(blanks, width);
-            //printf("\nblanks: %d\twidth:%d\targc: %d\ti: %d\ti++%%argc: %d\n", blanks, width, argc, i, (i%argc));
+            int width = atoi(tabs[i%argc]);
+            blanks = settab(pos, blanks, width);
             ++i;
         }
         putchar(c);
+        ++pos;
     }
 }
 
@@ -58,17 +58,19 @@ void detab(int argc, char **tabs) {
     int pos = 0;
     int blanks = 0;
     int i = 0;
+    int width;
 
     while ((c = getchar()) != EOF) {
         if (c == '\t') {
-            int width = *tabs[i%argc] - '0';
-            blanks = (width - 1) - (pos%width);
-            pos = setblank(blanks, pos);
+            width = atoi(tabs[i%argc]);
+            blanks = width - (pos%width);
+            setblank(blanks, pos);
+            pos = 0;
             ++i;
         } else if (c == '\n') {
             pos = 0;
-            putchar(c);
             i = 0;
+            putchar(c);
         } else {
             ++pos;
             putchar(c);
@@ -76,23 +78,21 @@ void detab(int argc, char **tabs) {
     }
 }
 
-int settab(int blanks, int width) {
-    if (blanks >= width) {
-        blanks -= width;
+int settab(int pos, int blanks, int width) {
+    if (TAB - pos%width <= blanks) {
+        blanks -= (TAB - pos%width);
         putchar('\t');
     } else {
-        while (--blanks > 0) {
+        while (--blanks >= 0) {
             putchar(' ');
         }
     }
-    //printf("\nblanks: %d\n", blanks);
     return blanks;
 }
 
-int setblank (int blanks, int pos) {
-    for (; blanks >= 0; --blanks) {
+void setblank(int blanks, int pos) {
+    while (--blanks >= 0) {
         putchar(' ');
         ++pos;
     }
-    return pos;
 }
