@@ -35,7 +35,7 @@ int main() {
     while (getword(word, MAXWORD) != EOF) {
         if (isalpha(word[0]) && noise(word) == -1) {
             root = addtreex(root, word, line);
-        } else if (word[0] = '\n') {
+        } else if (word[0] == '\n') {
             ++line;
         }
     }
